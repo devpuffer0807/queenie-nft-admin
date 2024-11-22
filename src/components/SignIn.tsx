@@ -18,8 +18,8 @@ function SignIn({ show, handleClose, }: { show: boolean, handleClose: () => void
     }
 
     return (
-        <Modal show={show} onHide={handleClose} centered >
-            <Modal.Header closeButton>
+        <Modal show={show} centered >
+            <Modal.Header >
                 <Modal.Title>Sign In</Modal.Title>
             </Modal.Header>
             <Modal.Body>
