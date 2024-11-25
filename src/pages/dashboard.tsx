@@ -12,6 +12,7 @@ import Layout from "../layout";
 import { BgColor } from "../App";
 import BgImg from "../assets/img/bg.png";
 import Loading from "../components/Loading";
+import Edit from "../components/Edit";
 
 import { getMetaData } from "../apis";
 
@@ -19,6 +20,7 @@ function Dashboard(props: any) {
 
   const [nftId, setNftId] = useState("");
   const [nftInfo, setNftInfo]: [nftInfo: any, setNftInfo: Function] = useState({});
+  const [showEdit, setShowEdit] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const searchHandler = async () => {
@@ -34,6 +36,7 @@ function Dashboard(props: any) {
       {
         loading && <Loading />
       }
+      <Edit show={showEdit} handleClose={() => setShowEdit(false)} nftInfo={nftInfo} setNftInfo={setNftInfo} />
       <div
         className="page-container dashboard"
         style={{ background: BgColor.BLUE }}
@@ -56,23 +59,20 @@ function Dashboard(props: any) {
           </Card>
 
           {
-            nftInfo.name &&
+            nftInfo.image &&
             (<Container className="mt-5" style={{ minHeight: 400 }}>
               <Stack direction="horizontal" style={{ justifyContent: "center", alignItems: "flex-start" }}>
                 <div style={{ maxWidth: "40%", marginRight: 20, width: 500 }}>
                   <div style={{ justifyContent: "space-between", fontWeight: "bold", width: "100%", fontSize: 26, display: "flex", alignItems: "center", paddingRight: 20 }}>
                     {nftInfo?.name}
-                    <Button variant="default">
+                    <Button variant="default" onClick={() => { setShowEdit(true) }}>
                       <AiFillEdit />
                     </Button>
                   </div>
 
                   <div style={{ marginTop: 20 }}>
-                    <div style={{ width: "100%", display: "flex", justifyContent: "space-between", paddingRight: 20 }}>
+                    <div style={{ width: "100%", display: "flex", justifyContent: "space-between", paddingRight: 20, fontWeight: "bold", fontSize: 18 }}>
                       Description:
-                      <Button variant="default">
-                        <AiFillEdit />
-                      </Button>
                     </div>
                     <div>{nftInfo?.description}</div>
                   </div>
