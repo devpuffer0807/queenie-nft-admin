@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BACKEND_SERVER = "http://localhost:4000/metadata/"
+const BACKEND_SERVER = "https://6hycovk5eqs4w6azmd55ffjwvm0mtvle.lambda-url.us-east-1.on.aws/metadata/"
 
 export async function getMetaData(nftId) {
     const data = await axios.get(`${BACKEND_SERVER}${nftId}.json`).then().catch(() => { });

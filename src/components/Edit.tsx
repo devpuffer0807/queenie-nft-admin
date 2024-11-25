@@ -21,6 +21,7 @@ function Edit({ show, handleClose, nftInfo, setNftInfo, nftId }: { show: boolean
         const res = await setMetadata(nftId, name, description, nftInfo?.image)
 
         if (res) {
+            handleClose();
             return toast("Save metadata successfully", customToastSuccessStyle);
         } else {
             return toast("Error to save metadata", customToastStyle);
