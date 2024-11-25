@@ -36,7 +36,7 @@ function Dashboard(props: any) {
       {
         loading && <Loading />
       }
-      <Edit show={showEdit} handleClose={() => setShowEdit(false)} nftInfo={nftInfo} setNftInfo={setNftInfo} />
+      <Edit show={showEdit} handleClose={() => setShowEdit(false)} nftInfo={nftInfo} setNftInfo={setNftInfo} nftId={nftId} />
       <div
         className="page-container dashboard"
         style={{ background: BgColor.BLUE }}

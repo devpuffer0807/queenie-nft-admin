@@ -3,14 +3,28 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
-import { customToastStyle } from "../configs/constants";
+import { customToastStyle, customToastSuccessStyle } from "../configs/constants";
+import { setMetadata } from "../apis";
 
-function Edit({ show, handleClose, nftInfo, setNftInfo }: { show: boolean, handleClose: () => void, nftInfo: any, setNftInfo: Function }) {
+function Edit({ show, handleClose, nftInfo, setNftInfo, nftId }: { show: boolean, handleClose: () => void, nftInfo: any, setNftInfo: Function, nftId: string }) {
     const [name, setName] = useState(nftInfo.name);
     const [description, setDescription] = useState(nftInfo.description)
 
-    const handleLogin = () => {
+    const handleSave = async () => {
+        if (!name) {
+            return toast("Please input name", customToastStyle);
+        }
+        if (!description) {
+            return toast("Please input description", customToastStyle);
+        }
 
+        const res = await setMetadata(nftId, name, description, nftInfo?.image)
+
+        if (res) {
+            return toast("Save metadata successfully", customToastSuccessStyle);
+        } else {
+            return toast("Error to save metadata", customToastStyle);
+        }
     }
 
     return (
@@ -43,7 +57,7 @@ function Edit({ show, handleClose, nftInfo, setNftInfo }: { show: boolean, handl
                 </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleLogin}>
+                <Button onClick={handleSave}>
                     Save
                 </Button>
             </Modal.Footer>
