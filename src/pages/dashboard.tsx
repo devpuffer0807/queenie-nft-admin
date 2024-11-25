@@ -7,14 +7,18 @@ import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import { AiFillEdit } from "react-icons/ai";
+// @ts-ignore
+import * as S3FileUpload from "react-s3";
+import toast from "react-hot-toast";
 
 import Layout from "../layout";
 import { BgColor } from "../App";
 import BgImg from "../assets/img/bg.png";
 import Loading from "../components/Loading";
 import Edit from "../components/Edit";
+import { customToastStyle, customToastSuccessStyle } from "../configs/constants";
 
-import { getMetaData } from "../apis";
+import { getMetaData, setMetadata } from "../apis";
 
 function Dashboard(props: any) {
 
@@ -22,6 +26,7 @@ function Dashboard(props: any) {
   const [nftInfo, setNftInfo]: [nftInfo: any, setNftInfo: Function] = useState({});
   const [showEdit, setShowEdit] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingFile, setLoadingFile] = useState(false);
 
   const searchHandler = async () => {
     if (loading) return;
@@ -29,6 +34,39 @@ function Dashboard(props: any) {
     const metadata = await getMetaData(nftId)
     setNftInfo(metadata);
     setLoading(false);
+  }
+
+  const fileChangeHadler = (event: any) => {
+    if (!(event?.target?.files?.length > 0)) {
+      return "";
+    }
+    const file = event.target.files[0];
+    setLoading(true);
+    setLoadingFile(true);
+
+    S3FileUpload.uploadFile(file, {
+      bucketName: process.env.REACT_APP_S3_BUCKET_NAME,
+      accessKeyId: process.env.REACT_APP_ACCESS_KEY_ID,
+      secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
+      region: "us-east-1",
+    })
+      .then(async (data: any) => {
+        const res = await setMetadata(nftId, nftInfo?.name, nftInfo?.description, data.location)
+        if (res) {
+          toast("Save metadata successfully", customToastSuccessStyle);
+        } else {
+          toast("Error to save metadata", customToastStyle);
+        }
+        setNftInfo({ ...nftInfo, ...{ image: data.location } })
+        setLoadingFile(false);
+        setLoading(false);
+
+
+      })
+      .catch((err: any) => {
+        setLoadingFile(false);
+        setLoading(false);
+      });
   }
 
   return (
@@ -77,7 +115,10 @@ function Dashboard(props: any) {
                     <div>{nftInfo?.description}</div>
                   </div>
                 </div>
-                <Image src={nftInfo.image} style={{ width: 400, borderRadius: 10 }} />
+                <div>
+                  <Image src={nftInfo.image} style={{ width: 350, borderRadius: 10 }} />
+                  <Form.Control type="file" onChange={fileChangeHadler} style={{ display: loadingFile ? "none" : "block", width: 350, marginTop: 5 }} />
+                </div>
               </Stack>
             </Container>)
           }
